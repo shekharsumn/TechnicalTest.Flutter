@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
-import 'package:flutter_tech_task/data/service/dio_service.dart';
+import 'package:flutter_tech_task/domian/usecases/get_post_by_id_usecase.dart';
 import 'package:flutter_tech_task/presentation/providers/saved_posts_notifier.dart';
 import 'package:flutter_tech_task/presentation/providers/connectivity_notifier.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';
@@ -13,7 +13,7 @@ class DetailsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final api = ref.read(apiServiceProvider);
+    final getPostByIdUseCase = ref.read(getPostByIdUseCaseProvider);
     final isConnected = ref.watch(isConnectedProvider);
     final savedPostsAsync = ref.watch(savedPostsProvider);
     final args =
@@ -22,7 +22,7 @@ class DetailsPage extends ConsumerWidget {
     final postId = args?['id'] ?? 1;
 
     return savedPostsAsync.when(
-      data: (savedPosts) => _buildWithSavedPosts(context, ref, api, isConnected, savedPosts, postId),
+      data: (savedPosts) => _buildWithSavedPosts(context, ref, getPostByIdUseCase, isConnected, savedPosts, postId),
       loading: () => Scaffold(
         appBar: AppBar(title: const Text('Post details')),
         body: const Center(child: CircularProgressIndicator()),
@@ -50,7 +50,7 @@ class DetailsPage extends ConsumerWidget {
   Widget _buildWithSavedPosts(
     BuildContext context,
     WidgetRef ref,
-    dynamic api,
+    GetPostByIdUseCase getPostByIdUseCase,
     bool isConnected,
     List<Post> savedPosts,
     int postId,
@@ -156,9 +156,9 @@ class DetailsPage extends ConsumerWidget {
       );
     }
 
-    // Online and post not saved locally, fetch from API
+    // Online and post not saved locally, fetch from API using use case
     return FutureBuilder<Either<ApiError, Post>>(
-      future: api.getPostById(postId),
+      future: getPostByIdUseCase.call(postId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
