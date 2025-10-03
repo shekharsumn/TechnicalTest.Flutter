@@ -4,7 +4,9 @@ import 'package:flutter_tech_task/data/models/post_model.dart';
 import 'package:flutter_tech_task/domian/usecases/get_post_by_id_usecase.dart';
 import 'package:flutter_tech_task/presentation/providers/saved_posts_notifier.dart';
 import 'package:flutter_tech_task/presentation/providers/connectivity_notifier.dart';
+import 'package:flutter_tech_task/presentation/widgets/offline_error_widget.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';
+import 'package:flutter_tech_task/utils/app_constants.dart';
 import 'package:dart_either/dart_either.dart';
 
 
@@ -33,12 +35,14 @@ class DetailsPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.grey),
-              const SizedBox(height: 16),
+              const Icon(Icons.error_outline, size: AppConstants.largeIconSize, color: Colors.grey),
+              const SizedBox(height: AppConstants.mediumVerticalSpacing),
               Text(
                 'Error loading saved posts: ${error.toString()}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16, color: Colors.grey),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Colors.grey,
+                ),
               ),
             ],
           ),
@@ -116,42 +120,8 @@ class DetailsPage extends ConsumerWidget {
         appBar: AppBar(
           title: const Text('Post details'),
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.wifi_off,
-                size: 64,
-                color: Colors.grey,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'No internet connection',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'This post is not saved locally.\nConnect to internet to view it.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Go Back'),
-              ),
-            ],
-          ),
+        body: OfflineErrorWidgets.postNotSaved(
+          onGoBack: () => Navigator.of(context).pop(),
         ),
       );
     }
@@ -183,19 +153,18 @@ class DetailsPage extends ConsumerWidget {
                   children: [
                     const Icon(
                       Icons.error_outline,
-                      size: 64,
+                      size: AppConstants.largeIconSize,
                       color: Colors.grey,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppConstants.mediumVerticalSpacing),
                     Text(
                       err.message,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Colors.grey,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppConstants.mediumVerticalSpacing),
                     ElevatedButton.icon(
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.arrow_back),
@@ -242,15 +211,33 @@ class PostDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(15),
+      padding: AppConstants.pagePadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(post.title,
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          const SizedBox(height: 10),
-          Text(post.body, style: const TextStyle(fontSize: 16)),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              )),
+          const SizedBox(height: AppConstants.tinyVerticalSpacing),
+          Text(post.body, style: Theme.of(context).textTheme.bodyLarge),
+          const SizedBox(height: AppConstants.standardVerticalSpacing),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  'comments/',
+                  arguments: {'postId': post.id},
+                );
+              },
+              icon: const Icon(Icons.comment),
+              label: const Text('View Comments'),
+              style: ElevatedButton.styleFrom(
+                padding: AppConstants.buttonPadding,
+              ),
+            ),
+          ),
         ],
       ),
     );

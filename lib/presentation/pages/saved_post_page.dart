@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
 import 'package:flutter_tech_task/presentation/providers/saved_posts_notifier.dart';
 import 'package:flutter_tech_task/presentation/providers/connectivity_notifier.dart';
+import 'package:flutter_tech_task/presentation/widgets/offline_error_widget.dart';
+import 'package:flutter_tech_task/presentation/widgets/post_list_item.dart';
+import 'package:flutter_tech_task/presentation/widgets/error_display_widget.dart';
+import 'package:flutter_tech_task/presentation/widgets/offline_status_banner.dart';
 
 class SavedPostPage extends ConsumerWidget {
   const SavedPostPage({Key? key}) : super(key: key);
@@ -15,19 +19,9 @@ class SavedPostPage extends ConsumerWidget {
     return savedPostsAsync.when(
       data: (savedPosts) => _buildSavedPostsContent(context, ref, savedPosts, isConnected),
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stackTrace) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            Text(
-              'Error loading saved posts: ${error.toString()}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          ],
-        ),
+            error: (error, stackTrace) => ErrorDisplayWidget(
+        title: 'Error Loading Saved Posts',
+        message: error.toString(),
       ),
     );
   }
@@ -35,92 +29,26 @@ class SavedPostPage extends ConsumerWidget {
   Widget _buildSavedPostsContent(BuildContext context, WidgetRef ref, List<Post> savedPosts, bool isConnected) {
 
     if (savedPosts.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isConnected ? Icons.bookmark_border : Icons.wifi_off,
-              size: 64,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              isConnected 
-                ? 'No saved posts' 
-                : 'No internet connection\nSaved posts will appear here when you save them',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-            if (!isConnected) ...[
-              const SizedBox(height: 8),
-              const Text(
-                'Connect to internet to load new posts',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ],
-        ),
-      );
+      return SavedPostsEmptyWidget(isConnected: isConnected);
     }
 
     return Column(
       children: [
         if (!isConnected)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.orange.shade100,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.orange.shade300),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.wifi_off, color: Colors.orange.shade700),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Offline mode - showing saved posts only',
-                    style: TextStyle(
-                      color: Colors.orange.shade700,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          const OfflineStatusBanner(
+            message: 'Offline mode - showing saved posts only',
           ),
         Expanded(
           child: ListView.builder(
             itemCount: savedPosts.length,
             itemBuilder: (context, index) {
               final post = savedPosts[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                child: ListTile(
-                  title: Text(post.title),
-                  subtitle: Text(post.body,
-                      maxLines: 2, overflow: TextOverflow.ellipsis),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      ref.read(savedPostsProvider.notifier).remove(post.id);
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pushNamed(
-                      'details/',
-                      arguments: {'id': post.id},
-                    );
+              return PostListItem(
+                post: post,
+                trailingAction: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    ref.read(savedPostsProvider.notifier).remove(post.id);
                   },
                 ),
               );

@@ -5,8 +5,20 @@ import 'package:flutter_tech_task/presentation/providers/saved_posts_notifier.da
 
 class PostListItem extends ConsumerWidget {
 
-  const PostListItem({Key? key, required this.post}) : super(key: key);
+  const PostListItem({
+    Key? key, 
+    required this.post,
+    this.trailingAction,
+    this.showBookmarkToggle = true,
+  }) : super(key: key);
+  
   final Post post;
+  
+  /// Custom trailing widget to override the default bookmark toggle
+  final Widget? trailingAction;
+  
+  /// Whether to show the default bookmark toggle (ignored if trailingAction is provided)
+  final bool showBookmarkToggle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,15 +40,7 @@ class PostListItem extends ConsumerWidget {
       child: ListTile(
         title: Text(post.title),
         subtitle: Text(post.body, maxLines: 2, overflow: TextOverflow.ellipsis),
-        trailing: IconButton(
-          icon: Icon(
-            isSaved ? Icons.bookmark : Icons.bookmark_border,
-            color: isSaved ? Colors.blue : null,
-          ),
-          onPressed: () {
-            ref.read(savedPostsProvider.notifier).toggle(post);
-          },
-        ),
+        trailing: _buildTrailingWidget(ref, isSaved),
         onTap: () {
           Navigator.of(context).pushNamed(
             'details/',
@@ -44,6 +48,30 @@ class PostListItem extends ConsumerWidget {
           );
         },
       ),
+    );
+  }
+
+  /// Builds the trailing widget based on configuration
+  Widget _buildTrailingWidget(WidgetRef ref, bool isSaved) {
+    // If custom trailing action is provided, use it
+    if (trailingAction != null) {
+      return trailingAction!;
+    }
+    
+    // If bookmark toggle is disabled, return empty widget
+    if (!showBookmarkToggle) {
+      return const SizedBox.shrink();
+    }
+    
+    // Default bookmark toggle behavior
+    return IconButton(
+      icon: Icon(
+        isSaved ? Icons.bookmark : Icons.bookmark_border,
+        color: isSaved ? Colors.blue : null,
+      ),
+      onPressed: () {
+        ref.read(savedPostsProvider.notifier).toggle(post);
+      },
     );
   }
 }

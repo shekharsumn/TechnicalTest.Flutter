@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tech_task/domian/usecases/get_posts_usecase.dart';
 import 'package:flutter_tech_task/presentation/widgets/post_list_item.dart';
+import 'package:flutter_tech_task/presentation/widgets/offline_error_widget.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
 import 'package:dart_either/dart_either.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';
@@ -42,48 +43,16 @@ class _ListPageState extends ConsumerState<ListPage>
           return either.fold(
             ifLeft: (ApiError err) {
               final isConnected = ref.watch(isConnectedProvider);
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      isConnected ? Icons.error_outline : Icons.wifi_off,
-                      size: 64,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      isConnected ? err.message : 'No internet connection',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    if (!isConnected) ...[
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Please check your internet connection and try again',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            final getPostsUseCase = ref.read(getPostsUseCaseProvider);
-                            _postsFuture = getPostsUseCase.call();
-                          });
-                        },
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Retry'),
-                      ),
-                    ],
-                  ],
-                ),
+              return ApiErrorWidget(
+                isConnected: isConnected,
+                error: err.message,
+                onRetry: () {
+                  setState(() {
+                    final getPostsUseCase = ref.read(getPostsUseCaseProvider);
+                    _postsFuture = getPostsUseCase.call();
+                  });
+                },
+                offlineSubtitle: 'Please check your internet connection and try again',
               );
             },
             ifRight: (List<Post> posts) {

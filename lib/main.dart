@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tech_task/presentation/pages/comment_page.dart';
 import 'package:flutter_tech_task/presentation/pages/post_detail_page.dart';
 import 'package:flutter_tech_task/presentation/pages/home_page.dart';
 import 'package:flutter_tech_task/presentation/pages/post_list_page.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         'home/': (context) => const HomePage(),
         'list/': (context) => const ListPage(),
         'details/': (context) => const DetailsPage(),
+        'comments/': (context) => const CommentsPage(),
       },
     );
   }

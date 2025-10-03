@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:dart_either/dart_either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
 import 'package:flutter_tech_task/data/models/comment_model.dart';
 import 'package:flutter_tech_task/data/repository/post_repository.dart';
 import 'package:flutter_tech_task/data/service/api_interface.dart';
 import 'package:flutter_tech_task/data/service/dio_service.dart';
+import 'package:flutter_tech_task/data/service/shared_preferences_service.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';
 
 /// Concrete implementation of PostRepository
@@ -18,6 +18,11 @@ class PostRepositoryImpl implements PostRepository {
 
   final ApiInterface _apiService;
   static const String _savedPostsKey = 'saved_posts';
+
+  /// Get SharedPreferencesService instance
+  Future<SharedPreferencesService> get _prefsService async {
+    return await SharedPreferencesService.getInstance();
+  }
 
   @override
   Future<Either<ApiError, List<Post>>> getPosts() async {
@@ -36,31 +41,31 @@ class PostRepositoryImpl implements PostRepository {
 
   @override
   Future<void> savePostLocally(Post post) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefsService = await _prefsService;
     final savedPosts = await getSavedPosts();
     
     // Avoid duplicates
     if (!savedPosts.any((p) => p.id == post.id)) {
       savedPosts.add(post);
       final jsonStringList = savedPosts.map((p) => json.encode(p.toJson())).toList();
-      await prefs.setStringList(_savedPostsKey, jsonStringList);
+      await prefsService.setStringList(_savedPostsKey, jsonStringList);
     }
   }
 
   @override
   Future<void> removeSavedPost(int postId) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefsService = await _prefsService;
     final savedPosts = await getSavedPosts();
     savedPosts.removeWhere((p) => p.id == postId);
     
     final jsonStringList = savedPosts.map((p) => json.encode(p.toJson())).toList();
-    await prefs.setStringList(_savedPostsKey, jsonStringList);
+    await prefsService.setStringList(_savedPostsKey, jsonStringList);
   }
 
   @override
   Future<List<Post>> getSavedPosts() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonStringList = prefs.getStringList(_savedPostsKey) ?? [];
+    final prefsService = await _prefsService;
+    final jsonStringList = prefsService.getStringList(_savedPostsKey) ?? [];
     return jsonStringList
         .map((jsonStr) => Post.fromJson(json.decode(jsonStr)))
         .toList();
