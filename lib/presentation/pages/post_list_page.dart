@@ -5,6 +5,7 @@ import 'package:flutter_tech_task/presentation/widgets/post_list_item.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
 import 'package:dart_either/dart_either.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';
+import 'package:flutter_tech_task/presentation/providers/connectivity_notifier.dart';
 
 
 class ListPage extends ConsumerStatefulWidget {
@@ -40,7 +41,50 @@ class _ListPageState extends ConsumerState<ListPage>
           final either = snapshot.data!;
           return either.fold(
             ifLeft: (ApiError err) {
-              return Center(child: Text(err.message));
+              final isConnected = ref.watch(isConnectedProvider);
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      isConnected ? Icons.error_outline : Icons.wifi_off,
+                      size: 64,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      isConnected ? err.message : 'No internet connection',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    if (!isConnected) ...[
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Please check your internet connection and try again',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            final api = ref.read(apiServiceProvider);
+                            _postsFuture = api.getPosts();
+                          });
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Retry'),
+                      ),
+                    ],
+                  ],
+                ),
+              );
             },
             ifRight: (List<Post> posts) {
               if (posts.isEmpty) {
