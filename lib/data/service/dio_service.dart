@@ -1,19 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:dart_either/dart_either.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';
 
 import '../../data/models/post_model.dart';
 import '../../data/models/comment_model.dart';
 import 'api_interface.dart';
 
+/// Riverpod provider for the API service
+final apiServiceProvider = Provider<ApiInterface>((ref) {
+  return DioService();
+});
+
 class DioService implements ApiInterface {
 
-  factory DioService({Dio? dio, String? baseUrl}) {
-    _instance ??= DioService._internal(dio: dio, baseUrl: baseUrl);
-    return _instance!;
-  }
-
-  DioService._internal({Dio? dio, String? baseUrl})
+  DioService({Dio? dio, String? baseUrl})
       : _dio = dio ?? Dio(BaseOptions(
           baseUrl: baseUrl ?? 'https://jsonplaceholder.typicode.com',
           connectTimeout: const Duration(seconds: 10),
@@ -26,8 +27,6 @@ class DioService implements ApiInterface {
             'Cache-Control': 'no-cache',
           },
         ));
-  // Lazy singleton
-  static DioService? _instance;
 
   final Dio _dio;
 

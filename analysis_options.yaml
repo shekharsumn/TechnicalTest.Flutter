@@ -35,6 +35,8 @@ linter:
     use_key_in_widget_constructors: true
 
 analyzer:
+  plugins:
+    - riverpod_lint
   exclude:
     - build/**
     - .dart_tool/**
