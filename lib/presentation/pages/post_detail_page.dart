@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tech_task/data/service/dio_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
+import 'package:flutter_tech_task/data/service/dio_service.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';
 import 'package:dart_either/dart_either.dart';
 
-class DetailsPage extends StatelessWidget {
+class DetailsPage extends ConsumerWidget {
   const DetailsPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final api = ref.read(apiServiceProvider);
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
@@ -19,7 +21,7 @@ class DetailsPage extends StatelessWidget {
         title: const Text('Post details'),
       ),
       body: FutureBuilder<Either<ApiError, Post>>(
-        future: DioService().getPostById(postId),
+        future: api.getPostById(postId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
