@@ -1,14 +1,16 @@
 import 'dart:convert';
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
 
-class SavedPostsNotifier extends StateNotifier<List<Post>> {
-
-  SavedPostsNotifier() : super([]) {
-    _loadFromPrefs();
-  }
+class SavedPostsNotifier extends Notifier<List<Post>> {
   static const String _storageKey = 'saved_posts';
+
+  @override
+  List<Post> build() {
+    _loadFromPrefs();
+    return [];
+  }
 
   Future<void> _loadFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
@@ -47,7 +49,6 @@ class SavedPostsNotifier extends StateNotifier<List<Post>> {
   }
 }
 
-final savedPostsProvider =
-    StateNotifierProvider<SavedPostsNotifier, List<Post>>((ref) {
+final savedPostsProvider = NotifierProvider<SavedPostsNotifier, List<Post>>(() {
   return SavedPostsNotifier();
 });
