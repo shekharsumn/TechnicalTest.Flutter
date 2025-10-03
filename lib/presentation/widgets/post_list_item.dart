@@ -10,7 +10,17 @@ class PostListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final savedPosts = ref.watch(savedPostsProvider);
+    // Watch the async saved posts state
+    final savedPostsAsync = ref.watch(savedPostsProvider);
+    
+    // Extract the saved posts list, defaulting to empty list if loading/error
+    final savedPosts = savedPostsAsync.when(
+      data: (posts) => posts,
+      loading: () => <Post>[],
+      error: (_, __) => <Post>[],
+    );
+    
+    // Optimized: Only check if this specific post is saved
     final isSaved = savedPosts.any((p) => p.id == post.id);
 
     return Card(

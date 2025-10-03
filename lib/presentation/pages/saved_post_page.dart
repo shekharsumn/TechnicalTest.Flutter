@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tech_task/data/models/post_model.dart';
 import 'package:flutter_tech_task/presentation/providers/saved_posts_notifier.dart';
 import 'package:flutter_tech_task/presentation/providers/connectivity_notifier.dart';
 
@@ -8,8 +9,30 @@ class SavedPostPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final savedPosts = ref.watch(savedPostsProvider);
+    final savedPostsAsync = ref.watch(savedPostsProvider);
     final isConnected = ref.watch(isConnectedProvider);
+
+    return savedPostsAsync.when(
+      data: (savedPosts) => _buildSavedPostsContent(context, ref, savedPosts, isConnected),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text(
+              'Error loading saved posts: ${error.toString()}',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSavedPostsContent(BuildContext context, WidgetRef ref, List<Post> savedPosts, bool isConnected) {
 
     if (savedPosts.isEmpty) {
       return Center(

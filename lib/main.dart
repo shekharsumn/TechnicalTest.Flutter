@@ -7,6 +7,7 @@ import 'package:flutter_tech_task/presentation/pages/post_list_page.dart';
 
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const ProviderScope(child: MyApp()));
 }
 

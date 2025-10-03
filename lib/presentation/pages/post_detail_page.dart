@@ -15,12 +15,46 @@ class DetailsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final api = ref.read(apiServiceProvider);
     final isConnected = ref.watch(isConnectedProvider);
-    final savedPosts = ref.watch(savedPostsProvider);
+    final savedPostsAsync = ref.watch(savedPostsProvider);
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 
     final postId = args?['id'] ?? 1;
 
+    return savedPostsAsync.when(
+      data: (savedPosts) => _buildWithSavedPosts(context, ref, api, isConnected, savedPosts, postId),
+      loading: () => Scaffold(
+        appBar: AppBar(title: const Text('Post details')),
+        body: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stackTrace) => Scaffold(
+        appBar: AppBar(title: const Text('Post details')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
+              Text(
+                'Error loading saved posts: ${error.toString()}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWithSavedPosts(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic api,
+    bool isConnected,
+    List<Post> savedPosts,
+    int postId,
+  ) {
     // First check if the post is in saved posts (for offline access)
     final savedPost = savedPosts.where((p) => p.id == postId).firstOrNull;
 
@@ -173,8 +207,8 @@ class DetailsPage extends ConsumerWidget {
             );
           },
           ifRight: (Post post) {
-            // Watch saved posts provider to reflect current state
-            final isSaved = ref.watch(savedPostsProvider).any((p) => p.id == post.id);
+            // Check if post is saved from the current savedPosts list
+            final isSaved = savedPosts.any((p) => p.id == post.id);
 
             return Scaffold(
               appBar: AppBar(

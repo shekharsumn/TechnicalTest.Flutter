@@ -1,54 +1,47 @@
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
+import 'package:flutter_tech_task/domian/usecases/manage_saved_posts_usecase.dart';
 
-class SavedPostsNotifier extends Notifier<List<Post>> {
-  static const String _storageKey = 'saved_posts';
+class SavedPostsNotifier extends AsyncNotifier<List<Post>> {
+  late ManageSavedPostsUseCase _manageSavedPostsUseCase;
 
   @override
-  List<Post> build() {
-    _loadFromPrefs();
-    return [];
+  Future<List<Post>> build() async {
+    _manageSavedPostsUseCase = ref.read(manageSavedPostsUseCaseProvider);
+    // Load saved posts on initialization
+    return await _manageSavedPostsUseCase.getSavedPosts();
   }
 
-  Future<void> _loadFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonStringList = prefs.getStringList(_storageKey) ?? [];
-    final posts = jsonStringList
-        .map((jsonStr) => Post.fromJson(json.decode(jsonStr)))
-        .toList();
-    state = posts;
-  }
-
-  Future<void> _saveToPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonStringList =
-        state.map((post) => json.encode(post.toJson())).toList();
-    await prefs.setStringList(_storageKey, jsonStringList);
-  }
-
-  /// Toggle save/remove
-  void toggle(Post post) {
-    if (state.any((p) => p.id == post.id)) {
-      remove(post.id);
-    } else {
-      state = [...state, post];
-      _saveToPrefs();
+  /// Toggle save/remove a post
+  Future<void> toggle(Post post) async {
+    state = const AsyncValue.loading();
+    try {
+      await _manageSavedPostsUseCase.togglePost(post);
+      final updatedPosts = await _manageSavedPostsUseCase.getSavedPosts();
+      state = AsyncValue.data(updatedPosts);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
     }
   }
 
   /// Explicit remove by ID
-  void remove(int postId) {
-    state = state.where((p) => p.id != postId).toList();
-    _saveToPrefs();
+  Future<void> remove(int postId) async {
+    state = const AsyncValue.loading();
+    try {
+      await _manageSavedPostsUseCase.removePost(postId);
+      final updatedPosts = await _manageSavedPostsUseCase.getSavedPosts();
+      state = AsyncValue.data(updatedPosts);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
   }
 
-  bool isSaved(Post post) {
-    return state.any((p) => p.id == post.id);
+  /// Check if a post is saved
+  Future<bool> isSaved(Post post) async {
+    return await _manageSavedPostsUseCase.isPostSaved(post.id);
   }
 }
 
-final savedPostsProvider = NotifierProvider<SavedPostsNotifier, List<Post>>(() {
+final savedPostsProvider = AsyncNotifierProvider<SavedPostsNotifier, List<Post>>(() {
   return SavedPostsNotifier();
 });

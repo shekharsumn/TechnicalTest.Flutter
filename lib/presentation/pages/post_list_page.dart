@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_tech_task/data/service/dio_service.dart';
+import 'package:flutter_tech_task/domian/usecases/get_posts_usecase.dart';
 import 'package:flutter_tech_task/presentation/widgets/post_list_item.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
 import 'package:dart_either/dart_either.dart';
@@ -22,8 +22,8 @@ class _ListPageState extends ConsumerState<ListPage>
   @override
   void initState() {
     super.initState();
-    final api = ref.read(apiServiceProvider);
-    _postsFuture = api.getPosts();
+    final getPostsUseCase = ref.read(getPostsUseCaseProvider);
+    _postsFuture = getPostsUseCase.call();
   }
 
   @override
@@ -74,8 +74,8 @@ class _ListPageState extends ConsumerState<ListPage>
                       ElevatedButton.icon(
                         onPressed: () {
                           setState(() {
-                            final api = ref.read(apiServiceProvider);
-                            _postsFuture = api.getPosts();
+                            final getPostsUseCase = ref.read(getPostsUseCaseProvider);
+                            _postsFuture = getPostsUseCase.call();
                           });
                         },
                         icon: const Icon(Icons.refresh),

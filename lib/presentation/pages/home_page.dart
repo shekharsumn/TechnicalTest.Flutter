@@ -9,7 +9,14 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final savedCount = ref.watch(savedPostsProvider).length;
+    final savedPostsAsync = ref.watch(savedPostsProvider);
+    
+    // Get saved count, defaulting to 0 if loading/error
+    final savedCount = savedPostsAsync.when(
+      data: (posts) => posts.length,
+      loading: () => 0,
+      error: (_, __) => 0,
+    );
 
     return DefaultTabController(
       length: 2,
