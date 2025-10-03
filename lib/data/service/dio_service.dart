@@ -7,7 +7,13 @@ import '../../data/models/comment_model.dart';
 import 'api_interface.dart';
 
 class DioService implements ApiInterface {
-  DioService({Dio? dio, String? baseUrl})
+
+  factory DioService({Dio? dio, String? baseUrl}) {
+    _instance ??= DioService._internal(dio: dio, baseUrl: baseUrl);
+    return _instance!;
+  }
+
+  DioService._internal({Dio? dio, String? baseUrl})
       : _dio = dio ?? Dio(BaseOptions(
           baseUrl: baseUrl ?? 'https://jsonplaceholder.typicode.com',
           connectTimeout: const Duration(seconds: 10),
@@ -20,6 +26,8 @@ class DioService implements ApiInterface {
             'Cache-Control': 'no-cache',
           },
         ));
+  // Lazy singleton
+  static DioService? _instance;
 
   final Dio _dio;
 
