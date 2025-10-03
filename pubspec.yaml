@@ -11,7 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: 0.13.4
+  dio: ^5.9.0
+  dart_either: ^2.0.0
 
   cupertino_icons: ^1.0.2
 
