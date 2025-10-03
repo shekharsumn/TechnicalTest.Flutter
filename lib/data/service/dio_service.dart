@@ -8,12 +8,18 @@ import 'api_interface.dart';
 
 class DioService implements ApiInterface {
   DioService({Dio? dio, String? baseUrl})
-      : _dio = dio ?? Dio(BaseOptions(baseUrl: baseUrl ?? 'https://jsonplaceholder.typicode.com', headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json',
-        'User-Agent': 'Flutter-App/1.0.0', // Important: Some APIs block requests without User-Agent
-        'Cache-Control': 'no-cache',
-      }));
+      : _dio = dio ?? Dio(BaseOptions(
+          baseUrl: baseUrl ?? 'https://jsonplaceholder.typicode.com',
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 20),
+          sendTimeout: const Duration(seconds: 10),
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json',
+            'User-Agent': 'Flutter-App/1.0.0',
+            'Cache-Control': 'no-cache',
+          },
+        ));
 
   final Dio _dio;
 

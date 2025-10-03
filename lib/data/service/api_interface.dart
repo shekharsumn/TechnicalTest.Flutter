@@ -5,7 +5,7 @@ import '../../data/models/post_model.dart';
 import '../../data/models/comment_model.dart';
 
 /// Abstraction for API methods used by the app.
-/// Returns Either to wrap successful data or a DioException for failures.
+/// Returns Either to wrap successful data or an ApiError for failures.
 abstract class ApiInterface {
   /// Fetch all posts
   Future<Either<ApiError, List<Post>>> getPosts();
