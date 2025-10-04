@@ -19,9 +19,18 @@ class PostRepositoryImpl implements PostRepository {
   final ApiInterface _apiService;
   static const String _savedPostsKey = 'saved_posts';
 
-  /// Get SharedPreferencesService instance
+  List<Post>? _cachedSavedPosts;
+
+  /// Cached SharedPreferencesService instance
+  SharedPreferencesService? _prefsServiceInstance;
+
+  /// Get SharedPreferencesService instance (cached)
   Future<SharedPreferencesService> get _prefsService async {
-    return await SharedPreferencesService.getInstance();
+    if (_prefsServiceInstance != null) {
+      return _prefsServiceInstance!;
+    }
+    _prefsServiceInstance = await SharedPreferencesService.getInstance();
+    return _prefsServiceInstance!;
   }
 
   @override
@@ -35,42 +44,65 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<Either<ApiError, List<CommentModel>>> getCommentsForPost(int postId) async {
+  Future<Either<ApiError, List<CommentModel>>> getCommentsForPost(
+      int postId) async {
     return await _apiService.getCommentsForPost(postId);
   }
 
   @override
+
+  /// Saves a post locally to shared preferences, avoiding duplicates.
   Future<void> savePostLocally(Post post) async {
     final prefsService = await _prefsService;
-    final savedPosts = await getSavedPosts();
-    
+    // Only call getSavedPosts once and reuse the result
+    final List<Post> savedPosts = await getSavedPosts();
+
     // Avoid duplicates
     if (!savedPosts.any((p) => p.id == post.id)) {
       savedPosts.add(post);
-      final jsonStringList = savedPosts.map((p) => json.encode(p.toJson())).toList();
+      final jsonStringList =
+          savedPosts.map((p) => json.encode(p.toJson())).toList();
       await prefsService.setStringList(_savedPostsKey, jsonStringList);
+      _cachedSavedPosts = null; // Invalidate cache
     }
   }
 
+  /// Removes a saved post from local storage by its [postId].
+  /// Updates the local cache and persistent storage accordingly.
   @override
   Future<void> removeSavedPost(int postId) async {
     final prefsService = await _prefsService;
-    final savedPosts = await getSavedPosts();
+    // Only call getSavedPosts once and reuse the result
+    final List<Post> savedPosts = await getSavedPosts();
     savedPosts.removeWhere((p) => p.id == postId);
-    
-    final jsonStringList = savedPosts.map((p) => json.encode(p.toJson())).toList();
+
+    final jsonStringList =
+        savedPosts.map((p) => json.encode(p.toJson())).toList();
     await prefsService.setStringList(_savedPostsKey, jsonStringList);
+    _cachedSavedPosts = null; // Invalidate cache
   }
 
   @override
   Future<List<Post>> getSavedPosts() async {
+    if (_cachedSavedPosts != null) {
+      return _cachedSavedPosts!;
+    }
     final prefsService = await _prefsService;
     final jsonStringList = prefsService.getStringList(_savedPostsKey) ?? [];
-    return jsonStringList
-        .map((jsonStr) => Post.fromJson(json.decode(jsonStr)))
-        .toList();
+    final List<Post> posts = [];
+    for (final jsonStr in jsonStringList) {
+      try {
+        posts.add(Post.fromJson(json.decode(jsonStr)));
+      } catch (e) {
+        // Skip malformed or corrupted entries
+        continue;
+      }
+    }
+    _cachedSavedPosts = posts;
+    return _cachedSavedPosts!;
   }
 
+  /// Checks if a post with [postId] is saved locally.
   @override
   Future<bool> isPostSaved(int postId) async {
     final savedPosts = await getSavedPosts();
@@ -79,7 +111,8 @@ class PostRepositoryImpl implements PostRepository {
 }
 
 /// Riverpod provider for PostRepository
+/// Provides a singleton instance of PostRepository for dependency injection via Riverpod.
 final postRepositoryProvider = Provider<PostRepository>((ref) {
-  final apiService = ref.read(apiServiceProvider);
+  final apiService = ref.read(dioServiceProvider);
   return PostRepositoryImpl(apiService: apiService);
 });

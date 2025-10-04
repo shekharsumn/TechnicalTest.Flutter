@@ -8,14 +8,25 @@ class SharedPreferencesService {
   
   static SharedPreferencesService? _instance;
   static SharedPreferences? _prefs;
-  
-  /// Get singleton instance of SharedPreferencesService
+  static Future<SharedPreferencesService>? _initializing;
+
   static Future<SharedPreferencesService> getInstance() async {
-    _instance ??= SharedPreferencesService._();
-    _prefs ??= await SharedPreferences.getInstance();
+    if (_instance != null) return _instance!;
+    if (_initializing != null) return await _initializing!;
+    _initializing = _init();
+    try {
+      return await _initializing!;
+    } finally {
+      _initializing = null;
+    }
+  }
+
+  static Future<SharedPreferencesService> _init() async {
+    _instance = SharedPreferencesService._();
+    _prefs = await SharedPreferences.getInstance();
     return _instance!;
   }
-  
+
   /// Get string list from shared preferences
   List<String>? getStringList(String key) {
     return _prefs?.getStringList(key);

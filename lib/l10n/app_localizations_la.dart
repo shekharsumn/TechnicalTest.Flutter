@@ -100,4 +100,7 @@ class AppLocalizationsLa extends AppLocalizations {
 
   @override
   String get somethingWentWrong => 'Aliquid male ivit';
+
+  @override
+  String get noDataAvailable => 'Nulla data disponibilia';
 }

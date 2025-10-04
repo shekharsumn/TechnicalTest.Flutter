@@ -8,7 +8,7 @@ import '../../data/models/comment_model.dart';
 import 'api_interface.dart';
 
 /// Riverpod provider for the API service
-final apiServiceProvider = Provider<ApiInterface>((ref) {
+final dioServiceProvider = Provider<ApiInterface>((ref) {
   return DioService();
 });
 

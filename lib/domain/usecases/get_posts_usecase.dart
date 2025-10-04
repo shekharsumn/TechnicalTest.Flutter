@@ -12,7 +12,10 @@ class GetPostsUseCase {
 
   final PostRepository _repository;
 
-  /// Execute the use case to get all posts
+  /// Executes the use case to get all posts.
+  ///
+  /// Returns an [Either] containing an [ApiError] on failure,
+  /// or a [List<Post>] on success.
   Future<Either<ApiError, List<Post>>> call() async {
     return await _repository.getPosts();
   }

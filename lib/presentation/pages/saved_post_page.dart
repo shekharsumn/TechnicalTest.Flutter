@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
 import 'package:flutter_tech_task/presentation/providers/saved_posts_notifier.dart';
 import 'package:flutter_tech_task/presentation/providers/connectivity_notifier.dart';
-import 'package:flutter_tech_task/presentation/widgets/offline_error_widget.dart';
+import 'package:flutter_tech_task/presentation/widgets/saved_posts_empty_widget.dart';
 import 'package:flutter_tech_task/presentation/widgets/post_list_item.dart';
 import 'package:flutter_tech_task/presentation/widgets/error_display_widget.dart';
 import 'package:flutter_tech_task/presentation/widgets/offline_status_banner.dart';

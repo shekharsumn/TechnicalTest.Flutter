@@ -117,5 +117,9 @@
   "somethingWentWrong": "Something went wrong",
   "@somethingWentWrong": {
     "description": "Generic error message"
+  },
+  "noDataAvailable": "No data available",
+  "@noDataAvailable": {
+    "description": "Message shown when no data is available from the server"
   }
 }

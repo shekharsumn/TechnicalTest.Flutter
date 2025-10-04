@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_tech_task/domian/usecases/get_posts_usecase.dart';
+import 'package:flutter_tech_task/domain/usecases/get_posts_usecase.dart';
 import 'package:flutter_tech_task/presentation/widgets/post_list_item.dart';
-import 'package:flutter_tech_task/presentation/widgets/offline_error_widget.dart';
+import 'package:flutter_tech_task/presentation/widgets/api_error_widget.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
 import 'package:dart_either/dart_either.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';

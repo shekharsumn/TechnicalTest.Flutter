@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
-import 'package:flutter_tech_task/domian/usecases/get_post_by_id_usecase.dart';
+import 'package:flutter_tech_task/domain/usecases/get_post_by_id_usecase.dart';
 import 'package:flutter_tech_task/presentation/providers/saved_posts_notifier.dart';
 import 'package:flutter_tech_task/presentation/providers/connectivity_notifier.dart';
 import 'package:flutter_tech_task/presentation/widgets/offline_error_widget.dart';
+import 'package:flutter_tech_task/presentation/widgets/save_post_button.dart';
+import 'package:flutter_tech_task/presentation/widgets/post_content_widget.dart';
+import 'package:flutter_tech_task/presentation/widgets/post_error_states.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';
-import 'package:flutter_tech_task/utils/app_constants.dart';
 import 'package:dart_either/dart_either.dart';
-import '../../l10n/app_localizations.dart';
 
-
+/// Post Detail Page - Orchestrates the display of a single post
+/// Following Single Responsibility Principle - focuses on page navigation and state coordination
 class DetailsPage extends ConsumerWidget {
   const DetailsPage({Key? key}) : super(key: key);
 
@@ -19,40 +21,24 @@ class DetailsPage extends ConsumerWidget {
     final getPostByIdUseCase = ref.read(getPostByIdUseCaseProvider);
     final isConnected = ref.watch(isConnectedProvider);
     final savedPostsAsync = ref.watch(savedPostsProvider);
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     final postId = args?['id'] ?? 1;
 
     return savedPostsAsync.when(
-      data: (savedPosts) => _buildWithSavedPosts(context, ref, getPostByIdUseCase, isConnected, savedPosts, postId),
-      loading: () => Scaffold(
-        appBar: AppBar(title: Text(AppLocalizations.of(context)!.postDetails)),
-        body: const Center(child: CircularProgressIndicator()),
+      data: (savedPosts) => _buildPostDetailContent(
+        context, 
+        ref, 
+        getPostByIdUseCase, 
+        isConnected, 
+        savedPosts, 
+        postId,
       ),
-      error: (error, stackTrace) => Scaffold(
-        appBar: AppBar(title: Text(AppLocalizations.of(context)!.postDetails)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: AppConstants.largeIconSize, color: Colors.grey),
-              const SizedBox(height: AppConstants.mediumVerticalSpacing),
-              Text(
-                AppLocalizations.of(context)!.errorLoadingSavedPosts(error.toString()),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      loading: () => PostErrorStates.loading(context),
+      error: (error, stackTrace) => PostErrorStates.savedPostsLoadingError(context, error),
     );
   }
 
-  Widget _buildWithSavedPosts(
+  Widget _buildPostDetailContent(
     BuildContext context,
     WidgetRef ref,
     GetPostByIdUseCase getPostByIdUseCase,
@@ -65,62 +51,14 @@ class DetailsPage extends ConsumerWidget {
 
     if (savedPost != null) {
       // Post is saved locally, show it directly
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Post details'),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.bookmark,
-                color: Colors.blue,
-              ),
-              onPressed: () {
-                ref.read(savedPostsProvider.notifier).toggle(savedPost);
-              },
-            ),
-          ],
-        ),
-        body: Column(
-          children: [
-            if (!isConnected)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade100,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.orange.shade300),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.wifi_off, color: Colors.orange.shade700),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.offlineModeShowingSavedPost,
-                        style: TextStyle(
-                          color: Colors.orange.shade700,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            Expanded(child: PostDetails(post: savedPost)),
-          ],
-        ),
-      );
+      return _buildSavedPostScaffold(context, ref, savedPost, savedPosts, isConnected);
     }
 
     // Post is not saved locally, need to fetch from API
     if (!isConnected) {
       // No internet and post not saved locally
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Post details'),
-        ),
+        appBar: AppBar(title: const Text('Post details')),
         body: OfflineErrorWidgets.postNotSaved(
           onGoBack: () => Navigator.of(context).pop(),
         ),
@@ -128,119 +66,67 @@ class DetailsPage extends ConsumerWidget {
     }
 
     // Online and post not saved locally, fetch from API using use case
+    return _buildFetchPostScaffold(context, ref, getPostByIdUseCase, savedPosts, postId);
+  }
+
+  /// Builds scaffold for saved post (available offline)
+  Widget _buildSavedPostScaffold(
+    BuildContext context,
+    WidgetRef ref,
+    Post savedPost,
+    List<Post> savedPosts,
+    bool isConnected,
+  ) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Post details'),
+        actions: [
+          SavePostButton(post: savedPost, savedPosts: savedPosts),
+        ],
+      ),
+      body: PostContentWidget(
+        post: savedPost,
+        isConnected: isConnected,
+      ),
+    );
+  }
+
+  /// Builds scaffold for fetching post from API
+  Widget _buildFetchPostScaffold(
+    BuildContext context,
+    WidgetRef ref,
+    GetPostByIdUseCase getPostByIdUseCase,
+    List<Post> savedPosts,
+    int postId,
+  ) {
     return FutureBuilder<Either<ApiError, Post>>(
       future: getPostByIdUseCase.call(postId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Post details')),
-            body: const Center(child: CircularProgressIndicator()),
-          );
+          return PostErrorStates.loading(context);
         } else if (!snapshot.hasData) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Post details')),
-            body: const Center(child: Text('No data available')),
-          );
+          return PostErrorStates.noData(context);
         }
 
         final either = snapshot.data!;
         return either.fold(
-          ifLeft: (ApiError err) {
-            return Scaffold(
-              appBar: AppBar(title: const Text('Post details')),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: AppConstants.largeIconSize,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(height: AppConstants.mediumVerticalSpacing),
-                    Text(
-                      err.message,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: AppConstants.mediumVerticalSpacing),
-                    ElevatedButton.icon(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back),
-                      label: const Text('Go Back'),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-          ifRight: (Post post) {
-            // Check if post is saved from the current savedPosts list
-            final isSaved = savedPosts.any((p) => p.id == post.id);
-
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('Post details'),
-                actions: [
-                  IconButton(
-                    icon: Icon(
-                      isSaved ? Icons.bookmark : Icons.bookmark_border,
-                      color: isSaved ? Colors.blue : null,
-                    ),
-                    onPressed: () {
-                      ref.read(savedPostsProvider.notifier).toggle(post);
-                    },
-                  ),
-                ],
-              ),
-              body: PostDetails(post: post),
-            );
-          },
+          ifLeft: (ApiError error) => PostErrorStates.apiError(context, error),
+          ifRight: (Post post) => Scaffold(
+            appBar: AppBar(
+              title: const Text('Post details'),
+              actions: [
+                SavePostButton(post: post, savedPosts: savedPosts),
+              ],
+            ),
+            body: PostContentWidget(
+              post: post,
+              isConnected: true, // Always connected when fetching from API
+              showOfflineBanner: false,
+            ),
+          ),
         );
       },
     );
   }
 }
 
-/// Separate widget for displaying post details
-class PostDetails extends StatelessWidget {
-  const PostDetails({Key? key, required this.post}) : super(key: key);
-  final Post post;
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: AppConstants.pagePadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(post.title,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              )),
-          const SizedBox(height: AppConstants.tinyVerticalSpacing),
-          Text(post.body, style: Theme.of(context).textTheme.bodyLarge),
-          const SizedBox(height: AppConstants.standardVerticalSpacing),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  'comments/',
-                  arguments: {'postId': post.id},
-                );
-              },
-              icon: const Icon(Icons.comment),
-              label: Text(AppLocalizations.of(context)!.viewComments),
-              style: ElevatedButton.styleFrom(
-                padding: AppConstants.buttonPadding,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

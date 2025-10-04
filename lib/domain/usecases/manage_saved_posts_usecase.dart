@@ -6,7 +6,7 @@ import 'package:flutter_tech_task/data/repository/post_repository_impl.dart';
 /// Use case for managing saved posts (save/remove/toggle)
 /// Encapsulates the business logic for local post management
 class ManageSavedPostsUseCase {
-  ManageSavedPostsUseCase({required PostRepository repository}) : _repository = repository;
+  ManageSavedPostsUseCase(PostRepository repository) : _repository = repository;
 
   final PostRepository _repository;
 
@@ -45,5 +45,5 @@ class ManageSavedPostsUseCase {
 /// Riverpod provider for ManageSavedPostsUseCase
 final manageSavedPostsUseCaseProvider = Provider<ManageSavedPostsUseCase>((ref) {
   final repository = ref.read(postRepositoryProvider);
-  return ManageSavedPostsUseCase(repository: repository);
+  return ManageSavedPostsUseCase(repository);
 });

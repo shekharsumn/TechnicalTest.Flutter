@@ -17,7 +17,7 @@ class GetPostByIdUseCase {
   Future<Either<ApiError, Post>> call(int postId) async {
     // First try to get from local storage
     final savedPosts = await _repository.getSavedPosts();
-    final savedPost = savedPosts.where((p) => p.id == postId).firstOrNull;
+    final savedPost = savedPosts.where((p) => p.id == postId).cast<Post?>().firstWhere((_) => true, orElse: () => null);
     
     if (savedPost != null) {
       return Right(savedPost);

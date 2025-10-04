@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tech_task/data/models/post_model.dart';
-import 'package:flutter_tech_task/domian/usecases/manage_saved_posts_usecase.dart';
+import 'package:flutter_tech_task/domain/usecases/manage_saved_posts_usecase.dart';
 
 class SavedPostsNotifier extends AsyncNotifier<List<Post>> {
   late ManageSavedPostsUseCase _manageSavedPostsUseCase;

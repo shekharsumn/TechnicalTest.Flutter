@@ -117,5 +117,9 @@
   "somethingWentWrong": "Aliquid male ivit",
   "@somethingWentWrong": {
     "description": "Nuntius erroris genericus"
+  },
+  "noDataAvailable": "Nulla data disponibilia",
+  "@noDataAvailable": {
+    "description": "Nuntius ostensus quando nulla data a servitore disponibilia"
   }
 }
