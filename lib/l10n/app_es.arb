@@ -1,0 +1,121 @@
+{
+  "@@locale": "es",
+  "appTitle": "Tarea Técnica Flutter",
+  "@appTitle": {
+    "description": "El título de la aplicación"
+  },
+  "posts": "Publicaciones",
+  "@posts": {
+    "description": "Título para la sección de publicaciones"
+  },
+  "all": "Todas",
+  "@all": {
+    "description": "Etiqueta para la pestaña de todas las publicaciones"
+  },
+  "saved": "Guardadas",
+  "@saved": {
+    "description": "Etiqueta para la pestaña de publicaciones guardadas"
+  },
+  "postDetails": "Detalles de la publicación",
+  "@postDetails": {
+    "description": "Título para la página de detalles de la publicación"
+  },
+  "errorLoadingSavedPosts": "Error al cargar publicaciones guardadas: {error}",
+  "@errorLoadingSavedPosts": {
+    "description": "Mensaje de error cuando las publicaciones guardadas fallan al cargar",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "El mensaje de error"
+      }
+    }
+  },
+  "offlineModeShowingSavedPost": "Modo sin conexión - mostrando publicación guardada",
+  "@offlineModeShowingSavedPost": {
+    "description": "Mensaje mostrado al mostrar una publicación guardada sin conexión"
+  },
+  "offlineModeShowingSavedPostsOnly": "Modo sin conexión - mostrando solo publicaciones guardadas",
+  "@offlineModeShowingSavedPostsOnly": {
+    "description": "Mensaje mostrado al mostrar lista de publicaciones guardadas sin conexión"
+  },
+  "retry": "Reintentar",
+  "@retry": {
+    "description": "Texto del botón para reintentar acción"
+  },
+  "goBack": "Volver",
+  "@goBack": {
+    "description": "Texto del botón para volver atrás"
+  },
+  "comments": "Comentarios",
+  "@comments": {
+    "description": "Título para la página de comentarios"
+  },
+  "errorLoadingComments": "Error al cargar comentarios",
+  "@errorLoadingComments": {
+    "description": "Título de error cuando los comentarios fallan al cargar"
+  },
+  "noCommentsAvailable": "No hay comentarios disponibles para esta publicación.",
+  "@noCommentsAvailable": {
+    "description": "Mensaje cuando no se encuentran comentarios"
+  },
+  "noInternetConnection": "Sin conexión a internet",
+  "@noInternetConnection": {
+    "description": "Mensaje de error cuando está sin conexión"
+  },
+  "noInternetConnectionDescription": "No se pueden cargar los comentarios. Verifique su conexión a internet e inténtelo nuevamente.",
+  "@noInternetConnectionDescription": {
+    "description": "Mensaje detallado cuando está sin conexión"
+  },
+  "noSavedPosts": "No hay publicaciones guardadas",
+  "@noSavedPosts": {
+    "description": "Mensaje cuando no hay publicaciones guardadas"
+  },
+  "noInternetConnectionSavedPosts": "Sin conexión a internet\nLas publicaciones guardadas aparecerán aquí cuando las guarde",
+  "@noInternetConnectionSavedPosts": {
+    "description": "Mensaje cuando está sin conexión y no hay publicaciones guardadas"
+  },
+  "connectToInternetToLoadNewPosts": "Conéctese a internet para cargar nuevas publicaciones",
+  "@connectToInternetToLoadNewPosts": {
+    "description": "Mensaje que solicita al usuario conectarse a internet"
+  },
+  "viewComments": "Ver Comentarios",
+  "@viewComments": {
+    "description": "Texto del botón para ver comentarios"
+  },
+  "errorLoadingSavedPostsGeneric": "Error al cargar publicaciones guardadas",
+  "@errorLoadingSavedPostsGeneric": {
+    "description": "Título de error genérico para publicaciones guardadas"
+  },
+  "badRequest": "Solicitud incorrecta",
+  "@badRequest": {
+    "description": "Mensaje de error HTTP 400"
+  },
+  "unauthorized": "No autorizado",
+  "@unauthorized": {
+    "description": "Mensaje de error HTTP 401"
+  },
+  "notFound": "No encontrado",
+  "@notFound": {
+    "description": "Mensaje de error HTTP 404"
+  },
+  "serverError": "Error del servidor",
+  "@serverError": {
+    "description": "Mensaje de error HTTP 500+"
+  },
+  "networkError": "Error de red",
+  "@networkError": {
+    "description": "Error de conectividad de red"
+  },
+  "connectionTimeout": "Tiempo de conexión agotado",
+  "@connectionTimeout": {
+    "description": "Error de tiempo de conexión agotado"
+  },
+  "requestCancelled": "Solicitud cancelada",
+  "@requestCancelled": {
+    "description": "Error de solicitud cancelada"
+  },
+  "somethingWentWrong": "Algo salió mal",
+  "@somethingWentWrong": {
+    "description": "Mensaje de error genérico"
+  }
+}

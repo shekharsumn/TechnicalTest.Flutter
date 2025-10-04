@@ -7,6 +7,7 @@ import 'package:flutter_tech_task/presentation/widgets/offline_error_widget.dart
 import 'package:flutter_tech_task/presentation/widgets/error_display_widget.dart';
 import 'package:flutter_tech_task/utils/api_error.dart';
 import 'package:flutter_tech_task/utils/app_constants.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:dart_either/dart_either.dart';
 
 class CommentsPage extends ConsumerWidget {
@@ -48,7 +49,7 @@ class CommentsPage extends ConsumerWidget {
                 return either.fold(
                   ifLeft: (ApiError error) {
                     return ErrorDisplayWidget(
-                      title: 'Error Loading Comments',
+                      title: AppLocalizations.of(context)!.errorLoadingComments,
                       message: error.message,
                       showBackButton: true,
                     );
@@ -66,7 +67,7 @@ class CommentsPage extends ConsumerWidget {
                             ),
                             const SizedBox(height: AppConstants.mediumVerticalSpacing),
                             Text(
-                              'No comments yet',
+                              AppLocalizations.of(context)!.noCommentsAvailable,
                               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tech_task/presentation/pages/post_list_page.dart';
 import 'package:flutter_tech_task/presentation/pages/saved_post_page.dart';
 import 'package:flutter_tech_task/presentation/providers/saved_posts_notifier.dart';
+import '../../l10n/app_localizations.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,15 +23,15 @@ class HomePage extends ConsumerWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Posts'),
+          title: Text(AppLocalizations.of(context)!.posts),
           bottom: TabBar(
             tabs: [
-              const Tab(text: 'All'),
+              Tab(text: AppLocalizations.of(context)!.all),
               Tab(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Saved'),
+                    Text(AppLocalizations.of(context)!.saved),
                     if (savedCount > 0) ...[
                       const SizedBox(width: 6),
                       CircleAvatar(

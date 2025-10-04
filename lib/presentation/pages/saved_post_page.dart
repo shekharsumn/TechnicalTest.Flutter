@@ -7,6 +7,7 @@ import 'package:flutter_tech_task/presentation/widgets/offline_error_widget.dart
 import 'package:flutter_tech_task/presentation/widgets/post_list_item.dart';
 import 'package:flutter_tech_task/presentation/widgets/error_display_widget.dart';
 import 'package:flutter_tech_task/presentation/widgets/offline_status_banner.dart';
+import '../../l10n/app_localizations.dart';
 
 class SavedPostPage extends ConsumerWidget {
   const SavedPostPage({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class SavedPostPage extends ConsumerWidget {
       data: (savedPosts) => _buildSavedPostsContent(context, ref, savedPosts, isConnected),
       loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stackTrace) => ErrorDisplayWidget(
-        title: 'Error Loading Saved Posts',
+        title: AppLocalizations.of(context)!.errorLoadingSavedPostsGeneric,
         message: error.toString(),
       ),
     );
@@ -35,8 +36,8 @@ class SavedPostPage extends ConsumerWidget {
     return Column(
       children: [
         if (!isConnected)
-          const OfflineStatusBanner(
-            message: 'Offline mode - showing saved posts only',
+          OfflineStatusBanner(
+            message: AppLocalizations.of(context)!.offlineModeShowingSavedPostsOnly,
           ),
         Expanded(
           child: ListView.builder(

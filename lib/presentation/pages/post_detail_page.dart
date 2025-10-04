@@ -8,6 +8,7 @@ import 'package:flutter_tech_task/presentation/widgets/offline_error_widget.dart
 import 'package:flutter_tech_task/utils/api_error.dart';
 import 'package:flutter_tech_task/utils/app_constants.dart';
 import 'package:dart_either/dart_either.dart';
+import '../../l10n/app_localizations.dart';
 
 
 class DetailsPage extends ConsumerWidget {
@@ -26,11 +27,11 @@ class DetailsPage extends ConsumerWidget {
     return savedPostsAsync.when(
       data: (savedPosts) => _buildWithSavedPosts(context, ref, getPostByIdUseCase, isConnected, savedPosts, postId),
       loading: () => Scaffold(
-        appBar: AppBar(title: const Text('Post details')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.postDetails)),
         body: const Center(child: CircularProgressIndicator()),
       ),
       error: (error, stackTrace) => Scaffold(
-        appBar: AppBar(title: const Text('Post details')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context)!.postDetails)),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +39,7 @@ class DetailsPage extends ConsumerWidget {
               const Icon(Icons.error_outline, size: AppConstants.largeIconSize, color: Colors.grey),
               const SizedBox(height: AppConstants.mediumVerticalSpacing),
               Text(
-                'Error loading saved posts: ${error.toString()}',
+                AppLocalizations.of(context)!.errorLoadingSavedPosts(error.toString()),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Colors.grey,
@@ -97,7 +98,7 @@ class DetailsPage extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Offline mode - showing saved post',
+                        AppLocalizations.of(context)!.offlineModeShowingSavedPost,
                         style: TextStyle(
                           color: Colors.orange.shade700,
                           fontWeight: FontWeight.w500,
@@ -232,7 +233,7 @@ class PostDetails extends StatelessWidget {
                 );
               },
               icon: const Icon(Icons.comment),
-              label: const Text('View Comments'),
+              label: Text(AppLocalizations.of(context)!.viewComments),
               style: ElevatedButton.styleFrom(
                 padding: AppConstants.buttonPadding,
               ),
