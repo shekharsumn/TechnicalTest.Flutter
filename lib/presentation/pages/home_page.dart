@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tech_task/presentation/pages/post_list_page.dart';
+import 'package:flutter_tech_task/presentation/pages/saved_post_page.dart';
+import 'package:flutter_tech_task/presentation/providers/saved_posts_notifier.dart';
+import '../../l10n/app_localizations.dart';
+
+class HomePage extends ConsumerWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final savedPostsAsync = ref.watch(savedPostsProvider);
+    
+    // Get saved count, defaulting to 0 if loading/error
+    final savedCount = savedPostsAsync.when(
+      data: (posts) => posts.length,
+      loading: () => 0,
+      error: (_, __) => 0,
+    );
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.posts),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: AppLocalizations.of(context)!.all),
+              Tab(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(AppLocalizations.of(context)!.saved),
+                    if (savedCount > 0) ...[
+                      const SizedBox(width: 6),
+                      CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.red,
+                        child: Text(
+                          '$savedCount',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    ]
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            ListPage(),
+            SavedPostPage(),
+          ],
+        ),
+      ),
+    );
+  }
+}

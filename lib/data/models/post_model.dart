@@ -1,9 +1,11 @@
-
-
 class Post {
+  Post(
+      {required this.id,
+      required this.userId,
+      required this.title,
+      required this.body});
 
-  Post({required this.id, required this.userId, required this.title, required this.body});
-
+  /// Creates a [Post] instance from a JSON object.
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       userId: json['userId'],
@@ -17,6 +19,7 @@ class Post {
   final String title;
   final String body;
 
+  /// Converts this [Post] instance into a JSON-compatible map.
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,

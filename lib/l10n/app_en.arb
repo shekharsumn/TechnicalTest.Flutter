@@ -1,0 +1,125 @@
+{
+  "@@locale": "en",
+  "appTitle": "Flutter Tech Task",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "posts": "Posts",
+  "@posts": {
+    "description": "Title for posts section"
+  },
+  "all": "All",
+  "@all": {
+    "description": "Label for all posts tab"
+  },
+  "saved": "Saved",
+  "@saved": {
+    "description": "Label for saved posts tab"
+  },
+  "postDetails": "Post details",
+  "@postDetails": {
+    "description": "Title for post detail page"
+  },
+  "errorLoadingSavedPosts": "Error loading saved posts: {error}",
+  "@errorLoadingSavedPosts": {
+    "description": "Error message when saved posts fail to load",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "The error message"
+      }
+    }
+  },
+  "offlineModeShowingSavedPost": "Offline mode - showing saved post",
+  "@offlineModeShowingSavedPost": {
+    "description": "Message shown when displaying a saved post offline"
+  },
+  "offlineModeShowingSavedPostsOnly": "Offline mode - showing saved posts only",
+  "@offlineModeShowingSavedPostsOnly": {
+    "description": "Message shown when displaying saved posts list offline"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Button text for retry action"
+  },
+  "goBack": "Go Back",
+  "@goBack": {
+    "description": "Button text for going back"
+  },
+  "comments": "Comments",
+  "@comments": {
+    "description": "Title for comments page"
+  },
+  "errorLoadingComments": "Error loading comments",
+  "@errorLoadingComments": {
+    "description": "Error title when comments fail to load"
+  },
+  "noCommentsAvailable": "No comments available for this post.",
+  "@noCommentsAvailable": {
+    "description": "Message when no comments are found"
+  },
+  "noInternetConnection": "No internet connection",
+  "@noInternetConnection": {
+    "description": "Error message when offline"
+  },
+  "noInternetConnectionDescription": "Unable to load comments. Please check your internet connection and try again.",
+  "@noInternetConnectionDescription": {
+    "description": "Detailed message when offline"
+  },
+  "noSavedPosts": "No saved posts",
+  "@noSavedPosts": {
+    "description": "Message when no posts are saved"
+  },
+  "noInternetConnectionSavedPosts": "No internet connection\nSaved posts will appear here when you save them",
+  "@noInternetConnectionSavedPosts": {
+    "description": "Message when offline and no saved posts"
+  },
+  "connectToInternetToLoadNewPosts": "Connect to internet to load new posts",
+  "@connectToInternetToLoadNewPosts": {
+    "description": "Message prompting user to connect to internet"
+  },
+  "viewComments": "View Comments",
+  "@viewComments": {
+    "description": "Button text to view comments"
+  },
+  "errorLoadingSavedPostsGeneric": "Error Loading Saved Posts",
+  "@errorLoadingSavedPostsGeneric": {
+    "description": "Generic error title for saved posts"
+  },
+  "badRequest": "Bad request",
+  "@badRequest": {
+    "description": "HTTP 400 error message"
+  },
+  "unauthorized": "Unauthorized",
+  "@unauthorized": {
+    "description": "HTTP 401 error message"
+  },
+  "notFound": "Not found",
+  "@notFound": {
+    "description": "HTTP 404 error message"
+  },
+  "serverError": "Server error",
+  "@serverError": {
+    "description": "HTTP 500+ error message"
+  },
+  "networkError": "Network error",
+  "@networkError": {
+    "description": "Network connectivity error"
+  },
+  "connectionTimeout": "Connection timeout",
+  "@connectionTimeout": {
+    "description": "Connection timeout error"
+  },
+  "requestCancelled": "Request cancelled",
+  "@requestCancelled": {
+    "description": "Request cancelled error"
+  },
+  "somethingWentWrong": "Something went wrong",
+  "@somethingWentWrong": {
+    "description": "Generic error message"
+  },
+  "noDataAvailable": "No data available",
+  "@noDataAvailable": {
+    "description": "Message shown when no data is available from the server"
+  }
+}

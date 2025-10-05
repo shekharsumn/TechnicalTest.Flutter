@@ -11,9 +11,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   dio: ^5.9.0
   dart_either: ^2.0.0
   flutter_riverpod: ^3.0.1
+  shared_preferences: ^2.5.3
+  connectivity_plus: ^6.0.5
+  intl: any
 
   cupertino_icons: ^1.0.2
 
@@ -32,3 +37,5 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+
+  generate: true

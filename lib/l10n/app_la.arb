@@ -1,0 +1,125 @@
+{
+  "@@locale": "la",
+  "appTitle": "Opus Technicum Flutter",
+  "@appTitle": {
+    "description": "Titulus applicationis"
+  },
+  "posts": "Scripta",
+  "@posts": {
+    "description": "Titulus sectionis scriptorum"
+  },
+  "all": "Omnia",
+  "@all": {
+    "description": "Tabula omnium scriptorum"
+  },
+  "saved": "Servata",
+  "@saved": {
+    "description": "Tabula scriptorum servatorum"
+  },
+  "postDetails": "Particularia scripti",
+  "@postDetails": {
+    "description": "Titulus paginae particulariarum scripti"
+  },
+  "errorLoadingSavedPosts": "Error in carendo scriptis servatis: {error}",
+  "@errorLoadingSavedPosts": {
+    "description": "Nuntius erroris quando scripta servata non carentur",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "description": "Nuntius erroris"
+      }
+    }
+  },
+  "offlineModeShowingSavedPost": "Modus sine conexu - ostendendum scriptum servatum",
+  "@offlineModeShowingSavedPost": {
+    "description": "Nuntius ostensus quando scriptum servatum sine conexu ostenditur"
+  },
+  "offlineModeShowingSavedPostsOnly": "Modus sine conexu - ostendenda tantum scripta servata",
+  "@offlineModeShowingSavedPostsOnly": {
+    "description": "Nuntius ostensus quando lista scriptorum servatorum sine conexu ostenditur"
+  },
+  "retry": "Iterare",
+  "@retry": {
+    "description": "Textus button ad actionem iterandam"
+  },
+  "goBack": "Redire",
+  "@goBack": {
+    "description": "Textus button ad redeundum"
+  },
+  "comments": "Commentaria",
+  "@comments": {
+    "description": "Titulus paginae commentariorum"
+  },
+  "errorLoadingComments": "Error in carendo commentariis",
+  "@errorLoadingComments": {
+    "description": "Titulus erroris quando commentaria non carentur"
+  },
+  "noCommentsAvailable": "Nulla commentaria disponibilia pro hoc scripto.",
+  "@noCommentsAvailable": {
+    "description": "Nuntius quando nulla commentaria inveniuntur"
+  },
+  "noInternetConnection": "Nulla conexio interretialis",
+  "@noInternetConnection": {
+    "description": "Nuntius erroris quando sine conexu"
+  },
+  "noInternetConnectionDescription": "Non possunt careri commentaria. Verifica conexionem interretialem et itera.",
+  "@noInternetConnectionDescription": {
+    "description": "Nuntius detailius quando sine conexu"
+  },
+  "noSavedPosts": "Nulla scripta servata",
+  "@noSavedPosts": {
+    "description": "Nuntius quando nulla scripta servata"
+  },
+  "noInternetConnectionSavedPosts": "Nulla conexio interretialis\nScripta servata hic apparebunt quando ea servas",
+  "@noInternetConnectionSavedPosts": {
+    "description": "Nuntius quando sine conexu et nulla scripta servata"
+  },
+  "connectToInternetToLoadNewPosts": "Conecte ad interrete ad nova scripta carenda",
+  "@connectToInternetToLoadNewPosts": {
+    "description": "Nuntius petens utorem conecti ad interrete"
+  },
+  "viewComments": "Videre Commentaria",
+  "@viewComments": {
+    "description": "Textus button ad commentaria videnda"
+  },
+  "errorLoadingSavedPostsGeneric": "Error in carendo scriptis servatis",
+  "@errorLoadingSavedPostsGeneric": {
+    "description": "Titulus erroris genericus pro scriptis servatis"
+  },
+  "badRequest": "Petitio mala",
+  "@badRequest": {
+    "description": "Nuntius erroris HTTP 400"
+  },
+  "unauthorized": "Non auctorizatus",
+  "@unauthorized": {
+    "description": "Nuntius erroris HTTP 401"
+  },
+  "notFound": "Non inventum",
+  "@notFound": {
+    "description": "Nuntius erroris HTTP 404"
+  },
+  "serverError": "Error servitoris",
+  "@serverError": {
+    "description": "Nuntius erroris HTTP 500+"
+  },
+  "networkError": "Error retis",
+  "@networkError": {
+    "description": "Error conectivitatis retis"
+  },
+  "connectionTimeout": "Tempus conexionis exspiravit",
+  "@connectionTimeout": {
+    "description": "Error temporis conexionis exspirati"
+  },
+  "requestCancelled": "Petitio cancellata",
+  "@requestCancelled": {
+    "description": "Error petitionis cancellatae"
+  },
+  "somethingWentWrong": "Aliquid male ivit",
+  "@somethingWentWrong": {
+    "description": "Nuntius erroris genericus"
+  },
+  "noDataAvailable": "Nulla data disponibilia",
+  "@noDataAvailable": {
+    "description": "Nuntius ostensus quando nulla data a servitore disponibilia"
+  }
+}
