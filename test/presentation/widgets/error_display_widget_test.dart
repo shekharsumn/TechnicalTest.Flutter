@@ -229,7 +229,10 @@ void main() {
       expect(find.byType(Column), findsOneWidget);
 
       final paddingWidgets = tester.widgetList<Padding>(find.byType(Padding));
-      final mainPaddingWidget = paddingWidgets.firstWhere((p) => p.padding == AppConstants.pagePadding);
+      final mainPaddingWidget = paddingWidgets.firstWhere(
+        (p) => p.padding == AppConstants.pagePadding,
+        orElse: () => throw TestFailure('No Padding widget found with AppConstants.pagePadding'),
+      );
       expect(mainPaddingWidget.padding, AppConstants.pagePadding);
 
       final columnWidget = tester.widget<Column>(find.byType(Column));
