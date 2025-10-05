@@ -153,7 +153,10 @@ void main() {
       );
 
       final sizedBoxes = tester.widgetList<SizedBox>(find.byType(SizedBox));
-      final spacingSizedBox = sizedBoxes.firstWhere((box) => box.width == 8.0);
+      final spacingSizedBox = sizedBoxes.firstWhere(
+        (box) => box.width == 8.0,
+        orElse: () => throw TestFailure('No SizedBox with width 8.0 found.'),
+      );
       expect(spacingSizedBox.width, 8.0);
     });
 
