@@ -33,6 +33,5 @@ class PageListViewModel extends BaseViewModel with ChangeNotifier {
   void disposeViewModel() {
     posts = const Right([]);
     notifyListeners();
-    super.dispose();
   }
 }
