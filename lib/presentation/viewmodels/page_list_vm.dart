@@ -20,9 +20,7 @@ class PageListViewModel extends BaseViewModel with ChangeNotifier {
 
   Future<void> fetchPosts() async {
     try {
-      await getPostsUseCase.call().then(((onValue) {
-        posts = onValue;
-      }));
+      posts = await getPostsUseCase.call();
     } on Exception catch (e) {
       posts = Left(ApiError(message: e.toString(), type: ApiErrorType.unknown));
     } finally {
