@@ -7,7 +7,7 @@ import 'package:flutter_tech_task/utils/api_error.dart';
 
 class PageListViewModel extends BaseViewModel with ChangeNotifier {
   PageListViewModel(this.getPostsUseCase);
-  late GetPostsUseCase getPostsUseCase;
+  final GetPostsUseCase getPostsUseCase;
   bool isLoading = false;
   Either<ApiError, List<Post>> posts = const Right([]);
 
