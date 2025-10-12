@@ -6,7 +6,6 @@ import 'package:flutter_tech_task/utils/api_error.dart';
 
 class PostListNotifier extends AsyncNotifier<Either<ApiError, List<Post>>> {
 
-  PostListNotifier();
   late final GetPostsUseCase _getPostsUseCase;
 
   @override
