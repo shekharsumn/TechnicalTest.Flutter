@@ -5,6 +5,7 @@ import 'package:flutter_tech_task/domain/usecases/manage_saved_posts_usecase.dar
 class SavedPostsNotifier extends AsyncNotifier<List<Post>> {
   late ManageSavedPostsUseCase _manageSavedPostsUseCase;
 
+  //initialize the use case in the build method
   @override
   Future<List<Post>> build() async {
     _manageSavedPostsUseCase = ref.read(manageSavedPostsUseCaseProvider);

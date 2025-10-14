@@ -2,66 +2,104 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ConnectivityService {
-  factory ConnectivityService() => _instance;
-  ConnectivityService._internal();
-  static final ConnectivityService _instance = ConnectivityService._internal();
+/// Connectivity state class
+class ConnectivityState {
 
-  final StreamController<bool> _connectivityController = StreamController<bool>.broadcast();
+  const ConnectivityState({
+    this.isConnected = false,
+    this.isLoading = false,
+    this.error,
+  });
+
+  final bool isConnected;
+  final bool isLoading;
+  final String? error;
+
+  ConnectivityState copyWith({
+    bool? isConnected,
+    bool? isLoading,
+    String? error,
+  }) {
+    return ConnectivityState(
+      isConnected: isConnected ?? this.isConnected,
+      isLoading: isLoading ?? this.isLoading,
+      error: error ?? this.error,
+    );
+  }
+}
+
+/// Connectivity Notifier using modern Riverpod pattern
+class ConnectivityNotifier extends Notifier<ConnectivityState> {
   Timer? _timer;
-  bool _isConnected = false;
+  static const Duration _checkInterval = Duration(seconds: 15);
 
-  Stream<bool> get connectivityStream => _connectivityController.stream;
-  bool get isConnected => _isConnected;
+  @override
+  ConnectivityState build() {
+    // Initialize with loading state
+    state = const ConnectivityState(isLoading: true);
+    
+    // Start connectivity monitoring
+    _initialize();
+    
+    // Clean up when provider is disposed
+    ref.onDispose(() {
+      _timer?.cancel();
+    });
 
-  void initialize({Duration checkInterval = const Duration(seconds: 5)}) {
+    return state;
+  }
+
+  void _initialize() {
     // Initial check
     _checkConnection();
 
     // Periodic checks
-    _timer = Timer.periodic(checkInterval, (_) => _checkConnection());
+    _timer = Timer.periodic(_checkInterval, (_) => _checkConnection());
   }
 
   Future<void> _checkConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com');
       final connected = result.isNotEmpty && result.first.rawAddress.isNotEmpty;
-      if (connected != _isConnected) {
-        _isConnected = connected;
-        _connectivityController.add(_isConnected);
+      
+      // Only update state if connection status changed
+      if (connected != state.isConnected || state.isLoading) {
+        state = ConnectivityState(
+          isConnected: connected,
+          isLoading: false,
+          error: null,
+        );
       }
-    } catch (_) {
-      if (_isConnected != false) {
-        _isConnected = false;
-        _connectivityController.add(false);
+    } catch (e) {
+      // Only update if we're not already in disconnected state
+      if (state.isConnected || state.isLoading) {
+        state = ConnectivityState(
+          isConnected: false,
+          isLoading: false,
+          error: e.toString(),
+        );
       }
     }
   }
 
-  void dispose() {
-    _timer?.cancel();
-    _connectivityController.close();
+  /// Manually trigger connectivity check
+  Future<void> refresh() async {
+    state = state.copyWith(isLoading: true);
+    await _checkConnection();
   }
 }
 
 /// Providers
-final connectivityServiceProvider = Provider<ConnectivityService>((ref) {
-  final service = ConnectivityService();
-  service.initialize();
-  ref.onDispose(() => service.dispose());
-  return service;
-});
+final connectivityNotifierProvider = NotifierProvider<ConnectivityNotifier, ConnectivityState>(
+  ConnectivityNotifier.new,
+);
 
-final connectivityStreamProvider = StreamProvider<bool>((ref) {
-  final service = ref.watch(connectivityServiceProvider);
-  return service.connectivityStream;
-});
-
+/// Convenience provider for just the connection status
 final isConnectedProvider = Provider<bool>((ref) {
-  final asyncConnected = ref.watch(connectivityStreamProvider);
-  return asyncConnected.when(
-    data: (connected) => connected,
-    loading: () => false,
-    error: (_, __) => false,
-  );
+  return ref.watch(connectivityNotifierProvider).isConnected;
+});
+
+/// Convenience provider for loading state
+final isConnectivityLoadingProvider = Provider<bool>((ref) {
+  return ref.watch(connectivityNotifierProvider).isLoading;
 });

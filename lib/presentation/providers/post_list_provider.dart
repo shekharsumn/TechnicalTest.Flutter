@@ -8,6 +8,7 @@ class PostListNotifier extends AsyncNotifier<Either<ApiError, List<Post>>> {
 
   late final GetPostsUseCase _getPostsUseCase;
 
+  //initialize the use case in the build method
   @override
   Future<Either<ApiError, List<Post>>> build() async {
     // Initial state can be set here if needed
@@ -15,6 +16,7 @@ class PostListNotifier extends AsyncNotifier<Either<ApiError, List<Post>>> {
     return fetchPosts();
   }
 
+  // Method to fetch posts and update state
   Future<Either<ApiError, List<Post>>> fetchPosts() async {
     // Logic to fetch posts and update the state
     state = const AsyncValue.loading();
